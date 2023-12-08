@@ -3,28 +3,26 @@ import Card from '../models/card';
 import { IUserReq } from '../models/user';
 import NotFoundError from '../errors/notfound';
 import IncorrectDataError from '../errors/incorrectDataError';
-import DefaultError from '../errors/defaultError';
 
 export const getCards = (req: Request, res: Response, next: NextFunction) => {
   Card.find({})
+    .orFail()
     .then((cards) => {
-      if (!cards) {
-        throw new DefaultError('Ошибка на сервере');
-      }
       res.send(cards);
     })
-    .catch(() => next(new DefaultError('Ошибка на сервере')));
+    .catch(next);
 };
 
 export const deleteCardById = (req: Request, res: Response, next: NextFunction) => {
   Card.findByIdAndRemove(req.params.cardId)
+    .orFail()
     .then((card) => {
       if (!card) {
         throw new NotFoundError('Карточка с указанным _id не найдена');
       }
       res.send(card);
     })
-    .catch(() => next(new DefaultError('Ошибка на сервере')));
+    .catch(next);
 };
 
 export const createCard = (req: IUserReq, res: any, next: NextFunction) => {
@@ -38,7 +36,7 @@ export const createCard = (req: IUserReq, res: any, next: NextFunction) => {
       }
       res.send(card);
     })
-    .catch(() => next(new DefaultError('Ошибка на сервере')));
+    .catch(next);
 };
 
 export const likeCard = (req: any, res: any, next: NextFunction) => {
@@ -48,13 +46,14 @@ export const likeCard = (req: any, res: any, next: NextFunction) => {
     { $addToSet: { likes: userId } },
     { new: true },
   )
+    .orFail()
     .then((card) => {
       if (!card) {
         throw new NotFoundError('Карточка с указанным _id не найдена');
       }
       res.send(card);
     })
-    .catch(() => next(new DefaultError('Ошибка на сервере')));
+    .catch(next);
 };
 
 export const dislikeCard = (req: any, res: any, next: NextFunction) => {
@@ -64,11 +63,12 @@ export const dislikeCard = (req: any, res: any, next: NextFunction) => {
     { $pull: { likes: userId } },
     { new: true },
   )
+    .orFail()
     .then((card) => {
       if (!card) {
         throw new NotFoundError('Карточка с указанным _id не найдена');
       }
       res.send(card);
     })
-    .catch(() => next(new DefaultError('Ошибка на сервере')));
+    .catch(next);
 };
