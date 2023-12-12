@@ -1,2 +1,3 @@
 export const NOT_FOUND_CODE = 404;
 export const INCORRECT_DATA_CODE = 400;
+export const INTERNAL_SERVER_ERROR_CODE = 500;

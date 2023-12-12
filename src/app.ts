@@ -1,6 +1,7 @@
 import express, { Response, Request, NextFunction } from 'express';
 import mongoose, { Error } from 'mongoose';
 import routes from './routes';
+import { INTERNAL_SERVER_ERROR_CODE } from './utils/errors';
 
 interface ResponseError extends Error {
   statusCode?: number;
@@ -16,19 +17,17 @@ app.use((req: any, res: Response, next: NextFunction) => {
   req.user = {
     _id: '656c73a50e6fbacdaa2a2eaa',
   };
-
   next();
 });
 
 app.use(routes);
 
 app.use((err: ResponseError, req: Request, res: Response, next: NextFunction) => {
-  const { statusCode = 500, message } = err;
-
+  const { statusCode = INTERNAL_SERVER_ERROR_CODE, message } = err;
   res
     .status(statusCode)
     .send({
-      message: statusCode === 500
+      message: statusCode === INTERNAL_SERVER_ERROR_CODE
         ? 'На сервере произошла ошибка'
         : message,
     });
