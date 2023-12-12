@@ -1,6 +1,8 @@
+import mongoose from 'mongoose';
 import { Request, Response, NextFunction } from 'express';
-
 import User, { IUserReq } from '../models/user';
+import IncorrectDataError from '../errors/incorrectDataError';
+import NotFoundError from '../errors/notfound';
 
 export const getUsers = (req: Request, res: Response, next: NextFunction) => {
   User.find({})
@@ -16,7 +18,12 @@ export const getUserById = (req: Request, res: Response, next: NextFunction) => 
     .then((user) => {
       res.send(user);
     })
-    .catch(next);
+    .catch((error) => {
+      if (error instanceof mongoose.Error.DocumentNotFoundError) {
+        next(new NotFoundError('Пользователь с указанным _id не найден'));
+      }
+      return next(error);
+    });
 };
 
 export const createUser = (req: Request, res: Response, next: NextFunction) => {
@@ -25,7 +32,12 @@ export const createUser = (req: Request, res: Response, next: NextFunction) => {
     .then((user) => {
       res.send(user);
     })
-    .catch(next);
+    .catch((error) => {
+      if (error instanceof mongoose.Error.ValidationError) {
+        next(new IncorrectDataError('Переданы некорректные данные'));
+      }
+      next(error);
+    });
 };
 
 export const updateProfile = (req: IUserReq, res: Response, next: NextFunction) => {
@@ -36,7 +48,15 @@ export const updateProfile = (req: IUserReq, res: Response, next: NextFunction) 
     .then((user) => {
       res.send(user);
     })
-    .catch(next);
+    .catch((error) => {
+      if (error instanceof mongoose.Error.ValidationError) {
+        next(new IncorrectDataError('Переданы некорректные данные'));
+      }
+      if (error instanceof mongoose.Error.DocumentNotFoundError) {
+        next(new NotFoundError('Пользователь с указанным _id не найден'));
+      }
+      next(error);
+    });
 };
 
 export const updateAvatar = (req: IUserReq, res: Response, next: NextFunction) => {
@@ -47,5 +67,13 @@ export const updateAvatar = (req: IUserReq, res: Response, next: NextFunction) =
     .then((user) => {
       res.send(user);
     })
-    .catch(next);
+    .catch((error) => {
+      if (error instanceof mongoose.Error.ValidationError) {
+        next(new IncorrectDataError('Переданы некорректные данные'));
+      }
+      if (error instanceof mongoose.Error.DocumentNotFoundError) {
+        next(new NotFoundError('Пользователь с указанным _id не найден'));
+      }
+      next(error);
+    });
 };
