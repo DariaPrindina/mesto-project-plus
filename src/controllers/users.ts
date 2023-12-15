@@ -1,6 +1,7 @@
 import mongoose from 'mongoose';
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
+import bcrypt from 'bcrypt';
 import User, { IUserReq } from '../models/user';
 import IncorrectDataError from '../errors/incorrectDataError';
 import NotFoundError from '../errors/notfound';
@@ -30,8 +31,11 @@ export const getUserById = (req: Request, res: Response, next: NextFunction) => 
 };
 
 export const createUser = (req: Request, res: Response, next: NextFunction) => {
-  const { name, about, avatar } = req.body;
-  return User.create({ name, about, avatar })
+  const { name, about, avatar, email, password } = req.body;
+  bcrypt.hash(password, 10)
+    .then((hash) => {
+      User.create({ name, about, avatar, email, password: hash });
+    })
     .then((user) => {
       res.send(user);
     })
@@ -96,7 +100,7 @@ export const login = (req: IUserReq, res: Response, next: NextFunction) => {
         { expiresIn: '7d' },
       );
 
-      res.send({ token });
+      res.send({ token, user });
     })
     .catch(() => {
       next(new UnauthorizedError('Неправильные почта или пароль'));
