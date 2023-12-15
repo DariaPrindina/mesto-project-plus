@@ -4,6 +4,7 @@ import Card from '../models/card';
 import { IUserReq } from '../models/user';
 import IncorrectDataError from '../errors/incorrectDataError';
 import NotFoundError from '../errors/notfound';
+import ForbiddenError from '../errors/forbiddenError';
 
 export const getCards = (req: Request, res: Response, next: NextFunction) => {
   Card.find({})
@@ -13,13 +14,21 @@ export const getCards = (req: Request, res: Response, next: NextFunction) => {
     .catch(next);
 };
 
-export const deleteCardById = (req: Request, res: Response, next: NextFunction) => {
+export const deleteCardById = (req: IUserReq, res: Response, next: NextFunction) => {
   Card.findByIdAndRemove(req.params.cardId)
     .orFail()
     .then((card) => {
+      const ownerId = card.owner;
+      const userId = req.user?._id;
+      if (ownerId.toString() !== userId) {
+        next(new ForbiddenError('Недостаточно прав, чтобы запрос прошёл успешно'));
+      }
       res.send(card);
     })
     .catch((error) => {
+      if (error instanceof mongoose.Error.CastError) {
+        next(new IncorrectDataError('Переданы некорректные данные'));
+      }
       if (error instanceof mongoose.Error.DocumentNotFoundError) {
         return next(new NotFoundError('Карточка с указанным id не найдена'));
       }
@@ -29,7 +38,6 @@ export const deleteCardById = (req: Request, res: Response, next: NextFunction) 
 
 export const createCard = (req: IUserReq, res: any, next: NextFunction) => {
   const { name, link } = req.body;
-  console.log(req.user?._id);
   const userId = req.user?._id;
   return Card.create({ name, link, owner: userId })
     .then((card) => {
