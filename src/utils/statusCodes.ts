@@ -1,3 +1,5 @@
+export const OK_CODE = 200;
+export const CREATED_CODE = 201;
 export const INCORRECT_DATA_CODE = 400;
 export const UNAUTHORIZED_ERROR_CODE = 401;
 export const FORBIDDEN_ERROR_CODE = 403;

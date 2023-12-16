@@ -5,6 +5,7 @@ import { IUserReq } from '../models/user';
 import IncorrectDataError from '../errors/incorrectDataError';
 import NotFoundError from '../errors/notfound';
 import ForbiddenError from '../errors/forbiddenError';
+import { CREATED_CODE, OK_CODE } from '../utils/statusCodes';
 
 export const getCards = (req: Request, res: Response, next: NextFunction) => {
   Card.find({})
@@ -15,24 +16,34 @@ export const getCards = (req: Request, res: Response, next: NextFunction) => {
 };
 
 export const deleteCardById = (req: IUserReq, res: Response, next: NextFunction) => {
-  Card.findByIdAndRemove(req.params.cardId)
+  const { cardId } = req.params;
+  Card.findById(cardId)
     .orFail()
     .then((card) => {
       const ownerId = card.owner;
       const userId = req.user?._id;
       if (ownerId.toString() !== userId) {
         next(new ForbiddenError('Недостаточно прав, чтобы запрос прошёл успешно'));
+        return;
       }
-      res.send(card);
+      Card.findByIdAndRemove(cardId)
+        .then((item) => {
+          res
+            .status(OK_CODE)
+            .send(item);
+        })
+        .catch(next);
     })
     .catch((error) => {
       if (error instanceof mongoose.Error.CastError) {
         next(new IncorrectDataError('Переданы некорректные данные'));
+        return;
       }
       if (error instanceof mongoose.Error.DocumentNotFoundError) {
-        return next(new NotFoundError('Карточка с указанным id не найдена'));
+        next(new NotFoundError('Карточка с указанным id не найдена'));
+        return;
       }
-      return next(error);
+      next(error);
     });
 };
 
@@ -41,11 +52,14 @@ export const createCard = (req: IUserReq, res: any, next: NextFunction) => {
   const userId = req.user?._id;
   return Card.create({ name, link, owner: userId })
     .then((card) => {
-      res.send(card);
+      res
+        .status(CREATED_CODE)
+        .send(card);
     })
     .catch((error) => {
       if (error instanceof mongoose.Error.ValidationError) {
         next(new IncorrectDataError('Переданы некорректные данные'));
+        return;
       }
       next(error);
     });
@@ -65,9 +79,11 @@ export const likeCard = (req: any, res: any, next: NextFunction) => {
     .catch((error) => {
       if (error instanceof mongoose.Error.CastError) {
         next(new IncorrectDataError('Переданы некорректные данные'));
+        return;
       }
       if (error instanceof mongoose.Error.DocumentNotFoundError) {
         next(new NotFoundError('Карточка с указанным id не найдена'));
+        return;
       }
       next(error);
     });
@@ -87,9 +103,11 @@ export const dislikeCard = (req: any, res: any, next: NextFunction) => {
     .catch((error) => {
       if (error instanceof mongoose.Error.CastError) {
         next(new IncorrectDataError('Переданы некорректные данные'));
+        return;
       }
       if (error instanceof mongoose.Error.DocumentNotFoundError) {
         next(new NotFoundError('Карточка с указанным id не найдена'));
+        return;
       }
       next(error);
     });

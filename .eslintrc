@@ -48,6 +48,7 @@
       "eol-last": ["error", "never"],
       "no-console": 0,
       "object-curly-newline": "off",
-      "no-useless-escape": "off"
+      "no-useless-escape": "off",
+      "no-useless-return": "off"
   }
 }

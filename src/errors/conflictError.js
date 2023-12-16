@@ -1,4 +1,4 @@
-import { CONFLICT_ERROR_CODE } from '../utils/errors';
+import { CONFLICT_ERROR_CODE } from '../utils/statusCodes';
 
 export default class ConflictError extends Error {
   constructor(message) {

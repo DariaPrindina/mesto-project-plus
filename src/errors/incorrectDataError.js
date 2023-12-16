@@ -1,4 +1,4 @@
-import { INCORRECT_DATA_CODE } from '../utils/errors';
+import { INCORRECT_DATA_CODE } from '../utils/statusCodes';
 
 export default class IncorrectDataError extends Error {
   constructor(message) {
