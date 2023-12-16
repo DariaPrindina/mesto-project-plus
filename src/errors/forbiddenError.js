@@ -1,4 +1,4 @@
-import { FORBIDDEN_ERROR_CODE } from '../utils/errors';
+import { FORBIDDEN_ERROR_CODE } from '../utils/statusCodes';
 
 export default class ForbiddenError extends Error {
   constructor(message) {

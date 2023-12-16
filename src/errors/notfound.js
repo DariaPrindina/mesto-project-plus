@@ -1,4 +1,4 @@
-import { NOT_FOUND_CODE } from '../utils/errors';
+import { NOT_FOUND_CODE } from '../utils/statusCodes';
 
 export default class NotFoundError extends Error {
   constructor(message) {

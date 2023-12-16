@@ -1,4 +1,4 @@
-import { UNAUTHORIZED_ERROR_CODE } from '../utils/errors';
+import { UNAUTHORIZED_ERROR_CODE } from '../utils/statusCodes';
 
 export default class UnauthorizedError extends Error {
   constructor(message) {
