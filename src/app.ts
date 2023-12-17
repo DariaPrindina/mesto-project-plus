@@ -1,5 +1,6 @@
 import express from 'express';
 import mongoose from 'mongoose';
+import { errors } from 'celebrate';
 import routes from './routes';
 import { createUser, login } from './controllers/users';
 import auth from './middlewares/auth';
@@ -24,6 +25,8 @@ app.use(auth);
 app.use(routes);
 
 app.use(errorLogger);
+
+app.use(errors());
 
 app.use(errorHandler);
 

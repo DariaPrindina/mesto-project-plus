@@ -2,6 +2,7 @@ import mongoose, { Model, Document, Schema } from 'mongoose';
 import validator from 'validator';
 import { Request } from 'express';
 import bcrypt from 'bcryptjs';
+import regExpUrl from '../utils/constants';
 
 interface IUser {
   name?: string,
@@ -52,7 +53,7 @@ const userSchema = new Schema<IUser>({
   avatar: {
     type: String,
     default: 'https://pictures.s3.yandex.net/resources/jacques-cousteau_1604399756.png',
-    validate: /^https?:\/\/(?:www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b(?:[-a-zA-Z0-9()@:%_\+.~#?&\/=]*)$/,
+    validate: regExpUrl,
   },
 });
 
