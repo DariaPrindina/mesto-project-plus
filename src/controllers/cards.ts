@@ -26,7 +26,7 @@ export const deleteCardById = (req: IUserReq, res: Response, next: NextFunction)
         next(new ForbiddenError('Недостаточно прав, чтобы запрос прошёл успешно'));
         return;
       }
-      Card.findByIdAndRemove(cardId)
+      Card.deleteOne()
         .then((item) => {
           res
             .status(OK_CODE)

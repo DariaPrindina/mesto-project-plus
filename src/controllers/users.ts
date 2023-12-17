@@ -42,7 +42,13 @@ export const createUser = (req: Request, res: Response, next: NextFunction) => {
         .then((user) => {
           res
             .status(CREATED_CODE)
-            .send(user);
+            .send({
+              _id: user._id,
+              name: user.name,
+              about: user.about,
+              avatar: user.avatar,
+              email: user.email,
+            });
         })
         .catch((error) => {
           if (error.code === 11000) {
