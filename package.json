@@ -8,8 +8,7 @@
     "build": "tsc",
     "dev": "ts-node-dev src/app.ts",
     "start": "ts-node src/app.ts",
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "deploy": "npm run build &&  scp -Cr ./build/* megadaria2015@84.201.166.229:/home/megadaria2015/mesto-project-plus/build"
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "darht_vadr",
   "license": "ISC",
