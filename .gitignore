@@ -16,5 +16,5 @@ node_modules
 
 # Typescript build result
 dist
-
+build
 .env
